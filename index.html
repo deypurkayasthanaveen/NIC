@@ -4,7 +4,16 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>admin-panel</title>
+    <title>NIC Admin Panel</title>
+    <script>
+      // Apply the stored theme before React mounts to avoid a light-mode flash.
+      try {
+        var theme = JSON.parse(localStorage.getItem('theme'));
+        if (theme === 'dark' || theme === 'light') {
+          document.documentElement.dataset.theme = theme;
+        }
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

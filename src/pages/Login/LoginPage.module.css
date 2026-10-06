@@ -1,0 +1,57 @@
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: var(--space-6) var(--space-4);
+  background:
+    radial-gradient(circle at 20% 10%, var(--color-primary-soft), transparent 45%),
+    var(--color-bg);
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--space-8);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.brand {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-6);
+  font-size: var(--text-lg);
+}
+
+.heading {
+  margin-bottom: var(--space-1);
+  text-align: center;
+}
+
+.subheading {
+  margin-bottom: var(--space-6);
+  text-align: center;
+  color: var(--color-text-subtle);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.note {
+  margin-top: var(--space-5);
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: var(--space-6) var(--space-5);
+  }
+}

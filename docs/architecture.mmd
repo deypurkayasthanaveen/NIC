@@ -1,0 +1,6 @@
+flowchart LR
+  Page["pages/*"] --> Hooks["hooks: useAsync, useTableState"]
+  Hooks --> Service["services/*Service.ts"]
+  Service --> Seed["data/*.ts (seed)"]
+  Page --> UI["components/*"]
+  Page --> Ctx["context: Auth, Theme, Toast, Layout"]
