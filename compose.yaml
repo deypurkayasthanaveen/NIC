@@ -7,3 +7,24 @@ services:
     ports:
       - "127.0.0.1:8001:8001"
     restart: unless-stopped
+  kong:
+    image: kong:3.9
+    container_name: NIC_kong
+    restart: unless-stopped
+
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml
+      KONG_PROXY_LISTEN: "0.0.0.0:8000"
+      KONG_ADMIN_LISTEN: "off"
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+
+    ports:
+      - "127.0.0.1:80:8000"
+
+    volumes:
+      - ./kong/kong.yml:/etc/kong/kong.yml:ro
+
+    depends_on:
+      - api
