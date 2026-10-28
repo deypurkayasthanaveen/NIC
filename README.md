@@ -1,24 +1,58 @@
-NIC — Database Setup
-This guide creates the PostgreSQL database and tables required by the NIC FastAPI client registration service.
-Prerequisites
-- PostgreSQL is installed and running (locally or in Docker).
-- You have a PostgreSQL role with permission to create a database and tables (for example, postgres).
-- You can access PostgreSQL using psql.
-1. Connect to PostgreSQL
-If PostgreSQL is installed on your machine:
-psql -U postgres -d postgres
-If PostgreSQL is running inside Docker, instead run (replace <postgres-container> with the actual container name):
-docker exec -it <postgres-container> psql -U postgres -d postgres
-2. Create the database
-Run this command inside psql, while connected to the postgres database:
+# NIC API
+
+A FastAPI service for client registration and transaction management with PostgreSQL.
+
+## Project structure
+
+- `app/main.py` — FastAPI application and endpoints
+- `app/database.py` — database engine and session setup
+- `app/schemas.py` — request/response models
+- `compose.yaml` — container configuration
+- `Dockerfile` — image build setup
+- `.env` — local environment variables
+
+## Requirements
+
+- Docker and Docker Compose
+- Python 3.12+
+- PostgreSQL database
+
+## Local setup
+
+Create a `.env` file in the project root:
+
+```env
+DATABASE_URL=postgresql+asyncpg://postgres:postgres@host.docker.internal:5432/nic
+```
+
+Then run:
+
+```bash
+docker compose up --build
+```
+
+The API will be available at:
+
+- http://127.0.0.1:8001
+- Swagger UI: http://127.0.0.1:8001/docs
+
+## Database setup
+
+Connect to PostgreSQL and create the database if needed:
+
+```sql
 CREATE DATABASE nic;
-If nic already exists, skip the CREATE DATABASE command. Do not drop your existing database.
+```
 
-Connect to the new database:
+Then connect to it:
+
+```sql
 \c nic
-3. Create the registration_transation table
-Naming: registration_transation is intentionally spelled exactly as it appears in the existing database and Python queries. Do not rename it without updating the application code.
+```
 
+Create the required tables:
+
+```sql
 CREATE TABLE IF NOT EXISTS public.registration_transation (
     transaction_id UUID NOT NULL DEFAULT gen_random_uuid(),
     status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
@@ -28,8 +62,7 @@ CREATE TABLE IF NOT EXISTS public.registration_transation (
     CONSTRAINT registration_transation_pkey PRIMARY KEY (transaction_id),
     CONSTRAINT valid_status CHECK (status IN ('PENDING', 'COMPLETED'))
 );
-The database generates transaction_id automatically when the backend omits it from an INSERT. The backend must supply expires_at, typically using NOW() + INTERVAL '10 minutes'.
-4. Create the client_request table
+
 CREATE TABLE IF NOT EXISTS public.client_request (
     client_id VARCHAR(100) NOT NULL,
     client_name VARCHAR(100) NOT NULL,
@@ -38,35 +71,24 @@ CREATE TABLE IF NOT EXISTS public.client_request (
     date DATE NOT NULL DEFAULT CURRENT_DATE,
     CONSTRAINT client_request_pkey PRIMARY KEY (client_id)
 );
-client_id deliberately has no PostgreSQL default. Your Python backend generates it, for example:
-from uuid import uuid4
+```
 
-client_id = "client_" + uuid4().hex
-The backend must provide that client_id when inserting a client. The backend should store a securely hashed client_secret, not the plaintext value.
-5. Verify the tables
-Run these commands inside psql:
-\dt public.*
-\d public.registration_transation
-\d public.client_request
-Both tables should exist, with the columns and defaults shown above.
-6. Optional: Test transaction creation
-INSERT INTO public.registration_transation (expires_at)
-VALUES (NOW() + INTERVAL '10 minutes')
-RETURNING transaction_id, status, created_at, expires_at;
-This should return a generated UUID and the default status PENDING. It adds a real row to your database.
+## Notes
 
-To inspect recent registrations:
-SELECT transaction_id, status, created_at, expires_at, completed_at
-FROM public.registration_transation
-ORDER BY created_at DESC
-LIMIT 10;
-To inspect client records without exposing their secret hashes:
-SELECT client_id, client_name, redirect_urls, date
-FROM public.client_request
-ORDER BY date DESC;
-Notes
-- Run CREATE DATABASE while connected to another database, such as postgres.
-- \c and \d are psql commands, not SQL statements.
-- CREATE TABLE IF NOT EXISTS does not update the structure of an already existing table; it only avoids an error if that table exists.
-- PostgreSQL automatically generates transaction_id; Python generates client_id.
-- Keep database passwords, API credentials, and client secrets out of your Git repository.
+- Keep `.env` out of version control.
+- The app uses the `DATABASE_URL` environment variable from the environment.
+- The service runs on port `8001`.
+
+## Useful checks
+
+```bash
+docker compose config
+```
+
+```bash
+docker compose ps
+```
+
+```bash
+docker compose logs -f api
+```
