@@ -1,15 +1,25 @@
 # NIC API
 
-A FastAPI service for client registration and transaction management with PostgreSQL.
+A FastAPI service for client registration and transaction management with PostgreSQL, exposed through Kong as an API gateway.
 
-## Project structure
+## Architecture
 
-- `app/main.py` — FastAPI application and endpoints
-- `app/database.py` — database engine and session setup
-- `app/schemas.py` — request/response models
-- `compose.yaml` — container configuration
-- `Dockerfile` — image build setup
+- `app/` — FastAPI application code
+- `kong/kong.yml` — Kong declarative route configuration
+- `compose.yaml` — Docker services for API and Kong
+- `Dockerfile` — application image
 - `.env` — local environment variables
+
+## Services
+
+### FastAPI API
+- Internal port: `8001`
+- Public access: through Kong at `http://127.0.0.1`
+
+### Kong Gateway
+- Public port: `80`
+- Route: `/api/v1/init`
+- Backend target: `http://api:8001`
 
 ## Requirements
 
@@ -25,16 +35,34 @@ Create a `.env` file in the project root:
 DATABASE_URL=postgresql+asyncpg://postgres:postgres@host.docker.internal:5432/nic
 ```
 
-Then run:
+Then start the stack:
 
 ```bash
 docker compose up --build
 ```
 
-The API will be available at:
+## Access points
 
-- http://127.0.0.1:8001
-- Swagger UI: http://127.0.0.1:8001/docs
+- Kong public endpoint: http://127.0.0.1
+- Swagger UI (direct app): http://127.0.0.1:8001/docs
+- API route through Kong: http://127.0.0.1/api/v1/init
+
+## Kong routing
+
+The gateway is configured in [kong/kong.yml](kong/kong.yml) and forwards requests to the FastAPI service:
+
+```yaml
+services:
+  - name: nic-api
+    url: http://api:8001
+    routes:
+      - name: nic-init-route
+        paths:
+          - /api/v1/init
+        methods:
+          - POST
+        strip_path: false
+```
 
 ## Database setup
 
@@ -53,7 +81,7 @@ Then connect to it:
 Create the required tables:
 
 ```sql
-CREATE TABLE IF NOT EXISTS public.registration_transation (
+CREATE TABLE IF NOT EXISTS public.registration_transaction (
     transaction_id UUID NOT NULL DEFAULT gen_random_uuid(),
     status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -76,8 +104,9 @@ CREATE TABLE IF NOT EXISTS public.client_request (
 ## Notes
 
 - Keep `.env` out of version control.
-- The app uses the `DATABASE_URL` environment variable from the environment.
-- The service runs on port `8001`.
+- The app reads `DATABASE_URL` from the environment.
+- Kong is serving the public API entrypoint on port `80`.
+- The FastAPI app itself still runs internally on port `8001`.
 
 ## Useful checks
 
@@ -91,4 +120,8 @@ docker compose ps
 
 ```bash
 docker compose logs -f api
+```
+
+```bash
+docker compose logs -f kong
 ```
