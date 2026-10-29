@@ -5,6 +5,10 @@ A FastAPI service for client registration and transaction management with Postgr
 ## Architecture
 
 - `app/` — FastAPI application code
+<<<<<<< HEAD
+=======
+- `frontend/` — Vite + React registration frontend
+>>>>>>> 23a706cc8f9910b600b580e5b521e9a7e2acf0ca
 - `kong/kong.yml` — Kong declarative route configuration
 - `compose.yaml` — Docker services for API and Kong
 - `Dockerfile` — application image

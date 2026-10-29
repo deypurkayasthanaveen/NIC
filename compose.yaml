@@ -2,6 +2,11 @@ services:
   api:
     build: .
     container_name: NIC_fastapi
+<<<<<<< HEAD
+=======
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+>>>>>>> 23a706cc8f9910b600b580e5b521e9a7e2acf0ca
     environment:
       DATABASE_URL: ${DATABASE_URL}
     ports:
