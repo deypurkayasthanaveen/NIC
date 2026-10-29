@@ -11,14 +11,3 @@ services:
         methods:
           - POST
         strip_path: false
-  
-  - name: nic-ui
-    url: http://host.docker.internal:5173
-    routes:
-      - name: nic-ui-route
-        paths:
-          - /
-        strip_path: false
-        preserve_host: true
-        #above line so that the url doesnt change to host.docker.internal which might lead to cors issue
-        
