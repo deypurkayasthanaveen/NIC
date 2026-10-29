@@ -1,0 +1,13 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: nic-api
+    url: http://api:8001
+    routes:
+      - name: nic-init-route
+        paths:
+          - /api/v1/init
+        methods:
+          - POST
+        strip_path: false
