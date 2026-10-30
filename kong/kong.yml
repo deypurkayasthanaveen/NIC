@@ -12,7 +12,7 @@ services:
           - POST
         strip_path: false
   - name: nic-ui
-    url: http://host.docker.internal:5173
+    url: http://frontend:80
     routes:
       - name: nic-ui-route
         paths:
