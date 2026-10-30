@@ -2,6 +2,7 @@ services:
   api:
     build: .
     container_name: NIC_fastapi
+    network_mode: host
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
@@ -21,6 +22,8 @@ services:
   kong:
     image: kong:3.9
     container_name: NIC_kong
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
     environment:
       KONG_DATABASE: "off"

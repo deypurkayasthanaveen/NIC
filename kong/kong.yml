@@ -3,7 +3,7 @@ _transform: true
 
 services:
   - name: nic-api
-    url: http://api:8001
+    url: http://host.docker.internal:8001
     routes:
       - name: nic-init-route
         paths:
