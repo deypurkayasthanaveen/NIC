@@ -199,6 +199,84 @@ button {
   top: var(--space-4);
 }
 
+@keyframes authdesk-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes authdesk-toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes authdesk-bell-ring {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-12deg);
+  }
+  60% {
+    transform: rotate(8deg);
+  }
+  80% {
+    transform: rotate(-4deg);
+  }
+}
+
+.authdesk-toast {
+  transform: none;
+}
+
+.authdesk-toast--in {
+  animation: authdesk-toast-in 300ms ease-out both;
+}
+
+.authdesk-toast--out {
+  animation: authdesk-toast-out 280ms ease-in both;
+}
+
+.authdesk-toast--in .authdesk-toast-bell {
+  transform-origin: top center;
+  animation: authdesk-bell-ring 560ms ease-out 180ms both;
+}
+
+@keyframes authdesk-toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.authdesk-toast-progress {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: #22c55e;
+  transform-origin: left center;
+  animation: authdesk-toast-progress 5s linear both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

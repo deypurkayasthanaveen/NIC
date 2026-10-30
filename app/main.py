@@ -5,8 +5,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.schemas import InitRequest, InitResponse
-from uuid import uuid4
+from app.schemas import ClientDetailsResponse, ClientListItem, InitRequest, InitResponse
 
 app = FastAPI()
 
@@ -18,7 +17,7 @@ async def register_client(
     result = await db.execute(
         text("""
             SELECT transaction_id
-            FROM public.registration_transation
+            FROM registration_transation
             WHERE transaction_id = CAST(:transaction_id AS UUID)
               AND status = 'PENDING'
               AND expires_at > NOW()
@@ -39,16 +38,17 @@ async def register_client(
     ).decode("utf-8")
     await db.execute(
         text("""
-            INSERT INTO public.client_request
-                (client_id, client_name, redirect_urls, client_secret)
+            INSERT INTO client_request
+                (client_id, client_name, redirect_urls, client_secret, transaction_id)
             VALUES
-                (:client_id, :client_name, :redirect_urls, :client_secret)
+                (:client_id, :client_name, :redirect_urls, :client_secret, CAST(:transaction_id AS UUID))
         """),
         {
             "client_id": client_id,
             "client_name": data.client_name,
             "redirect_urls": data.redirect_urls,
-            "client_secret": hashed_secret
+            "client_secret": hashed_secret,
+            "transaction_id": str(transaction_id),
         }
     )
     await db.execute(
@@ -92,4 +92,54 @@ async def init_client(
         client_id=client_id,
         client_secret=client_secret,
         status="COMPLETED"
+    )
+
+
+@app.get(
+    "/api/v1/clients",
+    response_model=list[ClientListItem],
+)
+async def list_clients(
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(
+        text("""
+            SELECT client_id, client_name, redirect_urls, date
+            FROM client_request
+            ORDER BY date DESC
+        """)
+    )
+    return [
+        ClientListItem(
+            client_id=row["client_id"],
+            client_name=row["client_name"],
+            redirect_urls=row["redirect_urls"],
+            date=row["date"],
+        )
+        for row in result.mappings().all()
+    ]
+
+
+@app.get(
+    "/api/v1/clients/{client_id}",
+    response_model=ClientDetailsResponse,
+)
+async def get_client_by_id(
+    client_id: str,
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(
+        text("""
+            SELECT client_name, redirect_urls
+            FROM client_request
+            WHERE client_id = :client_id
+        """),
+        {"client_id": client_id},
+    )
+    row = result.mappings().one_or_none()
+    if row is None:
+        raise HTTPException(status_code=404, detail="Client not found")
+    return ClientDetailsResponse(
+        client_name=row["client_name"],
+        redirect_urls=row["redirect_urls"],
     )

@@ -11,6 +11,12 @@ services:
         methods:
           - POST
         strip_path: false
+      - name: nic-clients-route
+        paths:
+          - /api/v1/clients
+        methods:
+          - GET
+        strip_path: false
   - name: nic-ui
     url: http://frontend:80
     routes:
