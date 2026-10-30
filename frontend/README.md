@@ -11,7 +11,7 @@ NIC/
   frontend/          Vite + React frontend
 ```
 
-## Backend
+## Run with Docker
 
 Create `.env` in the root with your Postgres URL (do not commit it):
 
@@ -19,17 +19,36 @@ Create `.env` in the root with your Postgres URL (do not commit it):
 DATABASE_URL=postgresql+asyncpg://postgres:postgres@host.docker.internal:5432/nic
 ```
 
+From the repository root:
+
 ```bash
 docker compose up --build
 ```
 
+The frontend image uses Node.js 24 to install locked dependencies with `npm ci`
+and run the production build. Nginx serves the resulting `dist/` files on port 80
+inside the container, with a fallback to `index.html` for React routes such as
+`/submit-form`.
+
+Kong serves the frontend and API on the same origin. It forwards frontend
+requests to `frontend:80` and `POST /api/v1/init` to the FastAPI service.
+
+- Frontend: http://127.0.0.1/submit-form
 - Kong: http://127.0.0.1 (`POST /api/v1/init`)
 - FastAPI docs: http://127.0.0.1:8001/docs
 
-## Frontend
+To build only the frontend image from the repository root:
 
 ```bash
-npm install
+docker build -t nic-frontend ./frontend
+```
+
+## Local frontend development
+
+Run these commands from `frontend/` while the backend stack is running:
+
+```bash
+npm ci
 npm run dev      # http://localhost:5173
 npm run build
 npm run lint
