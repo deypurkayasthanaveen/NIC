@@ -47,23 +47,64 @@
   --color-info: #0369a1;
   --color-info-soft: #e0f2fe;
 
-  --color-bg: #f4f6fa;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f8fafc;
-  --color-border: #e2e8f0;
-  --color-border-strong: #cbd5e1;
-  --color-text: #0f172a;
-  --color-text-muted: #475569;
-  --color-text-subtle: #64748b;
-  --color-overlay: rgba(15, 23, 42, 0.5);
+  --color-bg: #09090b;
+  --color-surface: #111827;
+  --color-surface-muted: #1f2937;
+  --color-border: #1f2937;
+  --color-border-strong: #374151;
+  --color-text: #f1f5f9;
+  --color-text-muted: #cbd5e1;
+  --color-text-subtle: #94a3b8;
+  --color-overlay: rgba(0, 0, 0, 0.6);
 
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.16);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
 
-  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.4);
+  --focus-ring: 0 0 0 3px rgba(45, 212, 191, 0.4);
 
-  color-scheme: light;
+  /* AuthDesk semantic theme tokens (defaults to dark mode) */
+  --theme-bg: #09090b;
+  --theme-pane-right: #09090b;
+  --theme-dots: rgba(255, 255, 255, 0.18);
+  --theme-page-gradient: radial-gradient(ellipse 100% 90% at 0% 100%, rgba(20, 184, 166, 0.55) 0%, rgba(20, 184, 166, 0.22) 32%, rgba(20, 184, 166, 0.06) 55%, transparent 75%);
+  --theme-glass-bg: rgba(18, 18, 23, 0.65);
+  --theme-glass-border: rgba(255, 255, 255, 0.12);
+  --theme-glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 8px 24px -6px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --theme-border: #27272a;
+  --theme-border-subtle: #3f3f46;
+  --theme-border-strong: #52525b;
+  --theme-text-primary: #fafafa;
+  --theme-text-secondary: #a1a1aa;
+  --theme-text-subtle: #d4d4d8;
+  --theme-text-placeholder: #71717a;
+  --theme-input-bg: rgba(9, 9, 11, 0.5);
+  --theme-btn-primary-bg: #fafafa;
+  --theme-btn-primary-text: #09090b;
+  --theme-btn-primary-hover: #e4e4e7;
+  --theme-btn-secondary-border: #52525b;
+  --theme-btn-secondary-text: #d4d4d8;
+  --theme-btn-secondary-hover-border: #a1a1aa;
+  --theme-table-header-bg: #18181b;
+  --theme-table-row-hover: rgba(24, 24, 27, 0.6);
+  --theme-toast-bg: #18181b;
+  --theme-toast-text: #fafafa;
+  --theme-toggle-bg: rgba(24, 24, 27, 0.7);
+  --theme-toggle-hover: rgba(39, 39, 42, 0.85);
+
+  /* Header floating pill (light defaults; :root also used before theme attr) */
+  --hdr-bg: rgba(255, 255, 255, 0.4);
+  --hdr-border: #d9e3e1;
+  --hdr-text: #0b0b0c;
+  --hdr-nav: #44504f;
+  --hdr-active-bg: #e6f7f4;
+  --hdr-active-text: #0b6b5f;
+  --hdr-btn-bg: #0b0b0c;
+  --hdr-btn-text: #ffffff;
+  --hdr-toggle-bg: #ffffff;
+  --hdr-icon: #0b0b0c;
+
+  color-scheme: dark;
 }
 
 [data-theme='dark'] {
@@ -82,7 +123,7 @@
   --color-info: #38bdf8;
   --color-info-soft: #0c4a6e;
 
-  --color-bg: #0b1120;
+  --color-bg: #09090b;
   --color-surface: #111827;
   --color-surface-muted: #1f2937;
   --color-border: #1f2937;
@@ -96,9 +137,122 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
 
-  --focus-ring: 0 0 0 3px rgba(96, 165, 250, 0.5);
+  --focus-ring: 0 0 0 3px rgba(45, 212, 191, 0.4);
+
+  --theme-bg: #09090b;
+  --theme-pane-right: #09090b;
+  --theme-dots: rgba(255, 255, 255, 0.18);
+  --theme-page-gradient: radial-gradient(ellipse 100% 90% at 0% 100%, rgba(20, 184, 166, 0.55) 0%, rgba(20, 184, 166, 0.22) 32%, rgba(20, 184, 166, 0.06) 55%, transparent 75%);
+  --theme-glass-bg: rgba(18, 18, 23, 0.65);
+  --theme-glass-border: rgba(255, 255, 255, 0.12);
+  --theme-glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 8px 24px -6px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --theme-border: #27272a;
+  --theme-border-subtle: #3f3f46;
+  --theme-border-strong: #52525b;
+  --theme-text-primary: #fafafa;
+  --theme-text-secondary: #a1a1aa;
+  --theme-text-subtle: #d4d4d8;
+  --theme-text-placeholder: #71717a;
+  --theme-input-bg: rgba(9, 9, 11, 0.5);
+  --theme-btn-primary-bg: #fafafa;
+  --theme-btn-primary-text: #09090b;
+  --theme-btn-primary-hover: #e4e4e7;
+  --theme-btn-secondary-border: #52525b;
+  --theme-btn-secondary-text: #d4d4d8;
+  --theme-btn-secondary-hover-border: #a1a1aa;
+  --theme-table-header-bg: #18181b;
+  --theme-table-row-hover: rgba(24, 24, 27, 0.6);
+  --theme-toast-bg: #18181b;
+  --theme-toast-text: #fafafa;
+  --theme-toggle-bg: rgba(24, 24, 27, 0.7);
+  --theme-toggle-hover: rgba(39, 39, 42, 0.85);
+
+  --hdr-bg: rgba(20, 24, 24, 0.4);
+  --hdr-border: #2a3433;
+  --hdr-text: #f2f4f4;
+  --hdr-nav: #bfcbc9;
+  --hdr-active-bg: rgba(16, 205, 181, 0.15);
+  --hdr-active-text: #3ee0c8;
+  --hdr-btn-bg: #f2f4f4;
+  --hdr-btn-text: #0b0b0c;
+  --hdr-toggle-bg: transparent;
+  --hdr-icon: #f2f4f4;
 
   color-scheme: dark;
+}
+
+[data-theme='light'] {
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-soft: #dbeafe;
+  --color-on-primary: #ffffff;
+
+  --color-success: #15803d;
+  --color-success-soft: #dcfce7;
+  --color-warning: #b45309;
+  --color-warning-soft: #fef3c7;
+  --color-danger: #b91c1c;
+  --color-danger-hover: #991b1b;
+  --color-danger-soft: #fee2e2;
+  --color-info: #0369a1;
+  --color-info-soft: #e0f2fe;
+
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f1f5f9;
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+  --color-text: #0f172a;
+  --color-text-muted: #475569;
+  --color-text-subtle: #64748b;
+  --color-overlay: rgba(15, 23, 42, 0.4);
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+
+  --focus-ring: 0 0 0 3px rgba(20, 184, 166, 0.35);
+
+  --theme-bg: #f8fafc;
+  --theme-pane-right: #ffffff;
+  --theme-dots: rgba(100, 116, 139, 0.35);
+  --theme-page-gradient: radial-gradient(ellipse 100% 90% at 0% 100%, rgba(20, 184, 166, 0.42) 0%, rgba(20, 184, 166, 0.16) 32%, rgba(20, 184, 166, 0.05) 55%, transparent 75%);
+  --theme-glass-bg: rgba(255, 255, 255, 0.75);
+  --theme-glass-border: rgba(203, 213, 225, 0.75);
+  --theme-glass-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.14), 0 8px 20px -6px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(203, 213, 225, 0.6);
+  --theme-border: #e2e8f0;
+  --theme-border-subtle: #cbd5e1;
+  --theme-border-strong: #94a3b8;
+  --theme-text-primary: #09090b;
+  --theme-text-secondary: #52525b;
+  --theme-text-subtle: #3f3f46;
+  --theme-text-placeholder: #a1a1aa;
+  --theme-input-bg: rgba(255, 255, 255, 0.75);
+  --theme-btn-primary-bg: #09090b;
+  --theme-btn-primary-text: #ffffff;
+  --theme-btn-primary-hover: #27272a;
+  --theme-btn-secondary-border: #cbd5e1;
+  --theme-btn-secondary-text: #3f3f46;
+  --theme-btn-secondary-hover-border: #94a3b8;
+  --theme-table-header-bg: #f1f5f9;
+  --theme-table-row-hover: #f8fafc;
+  --theme-toast-bg: #ffffff;
+  --theme-toast-text: #09090b;
+  --theme-toggle-bg: rgba(255, 255, 255, 0.85);
+  --theme-toggle-hover: #f1f5f9;
+
+  --hdr-bg: rgba(255, 255, 255, 0.4);
+  --hdr-border: #d9e3e1;
+  --hdr-text: #0b0b0c;
+  --hdr-nav: #44504f;
+  --hdr-active-bg: #e6f7f4;
+  --hdr-active-text: #0b6b5f;
+  --hdr-btn-bg: #0b0b0c;
+  --hdr-btn-text: #ffffff;
+  --hdr-toggle-bg: #ffffff;
+  --hdr-icon: #0b0b0c;
+
+  color-scheme: light;
 }
 
 *,
@@ -110,7 +264,7 @@
 html,
 body,
 #root {
-  height: 100%;
+  min-height: 100%;
 }
 
 body {
@@ -118,9 +272,10 @@ body {
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   line-height: 1.5;
-  color: var(--color-text);
-  background: var(--color-bg);
+  color: var(--theme-text-primary);
+  background: var(--theme-bg);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 150ms ease, color 150ms ease;
 }
 
 h1,
@@ -275,6 +430,25 @@ button {
   background: #22c55e;
   transform-origin: left center;
   animation: authdesk-toast-progress 5s linear both;
+}
+
+.authdesk-glass-card {
+  background-color: var(--theme-glass-bg);
+  border: none;
+  box-shadow:
+    0 1px 2px rgba(16, 24, 40, 0.04),
+    0 10px 28px rgba(16, 24, 40, 0.09),
+    0 28px 56px rgba(16, 24, 40, 0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+
+[data-theme='dark'] .authdesk-glass-card {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 10px 28px rgba(0, 0, 0, 0.5),
+    0 28px 56px rgba(0, 0, 0, 0.4);
 }
 
 @media (prefers-reduced-motion: reduce) {

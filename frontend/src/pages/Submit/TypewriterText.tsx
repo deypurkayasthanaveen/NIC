@@ -8,6 +8,7 @@ function useTypewriter(text: string, speed = 90) {
 
   useEffect(() => {
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCount(text.length)
       setAnnounced(true)
       return
@@ -60,13 +61,13 @@ export function TypewriterText({ text, speedMs = 90 }: TypewriterTextProps) {
       <div className="grid">
         <p
           aria-hidden="true"
-          className="invisible col-start-1 row-start-1 whitespace-pre-line text-3xl font-semibold leading-snug text-zinc-50"
+          className="invisible col-start-1 row-start-1 whitespace-pre-line text-3xl font-semibold leading-snug text-[var(--theme-text-primary)]"
         >
           {text}
         </p>
         <p
           aria-hidden="true"
-          className="col-start-1 row-start-1 whitespace-pre-line text-3xl font-semibold leading-snug text-zinc-50"
+          className="col-start-1 row-start-1 whitespace-pre-line text-3xl font-semibold leading-snug text-[var(--theme-text-primary)]"
         >
           {typed}
           <span className="animate-pulse text-teal-400">|</span>

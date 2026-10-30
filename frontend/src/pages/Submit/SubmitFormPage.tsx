@@ -1,10 +1,19 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { Bell, Eye, EyeOff } from 'lucide-react'
+import {
+  AppWindow,
+  ArrowRight,
+  Bell,
+  Eye,
+  EyeOff,
+  KeyRound,
+  Link2 as LinkIcon,
+  Lock,
+  type LucideIcon,
+} from 'lucide-react'
 import { ClientApiError, initClient } from '../../services/clientService'
 import { TypewriterText } from './TypewriterText'
 
-const BRAND = 'AuthDesk'
 const INTRO =
   'Welcome to AuthDesk.\nRegister your app in seconds: give it a name, a secret and a redirect URL.'
 const TOAST_MS = 5000
@@ -22,10 +31,10 @@ interface ClientValues {
 
 const emptyValues: ClientValues = { name: '', secret: '', redirect: '' }
 
-const fields: { id: FieldId; label: string; type: string; placeholder: string }[] = [
-  { id: 'name', label: 'Client Name', type: 'text', placeholder: 'My web app' },
-  { id: 'secret', label: 'Client Secret', type: 'password', placeholder: 'Enter client secret' },
-  { id: 'redirect', label: 'Redirect URL', type: 'url', placeholder: 'https://example.com/callback' },
+const fields: { id: FieldId; label: string; type: string; placeholder: string; icon: LucideIcon }[] = [
+  { id: 'name', label: 'Client Name', type: 'text', placeholder: 'My web app', icon: AppWindow },
+  { id: 'secret', label: 'Client Secret', type: 'password', placeholder: 'Enter client secret', icon: Lock },
+  { id: 'redirect', label: 'Redirect URL', type: 'url', placeholder: 'https://example.com/callback', icon: LinkIcon },
 ]
 
 function validate(values: ClientValues): Partial<Record<FieldId, string>> {
@@ -38,25 +47,6 @@ function validate(values: ClientValues): Partial<Record<FieldId, string>> {
     errors.redirect = 'Enter a full URL starting with http:// or https://.'
   }
   return errors
-}
-
-function AuthDeskLogo() {
-  return (
-    <div className="flex items-center gap-3">
-      <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true">
-        <rect width="36" height="36" rx="9" className="fill-teal-400" />
-        <path
-          d="M11 24V12l7 8 7-8v12"
-          fill="none"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="stroke-zinc-950"
-        />
-      </svg>
-      <span className="text-xl font-semibold tracking-tight text-zinc-50">{BRAND}</span>
-    </div>
-  )
 }
 
 function ClientForm({ onSubmitted }: { onSubmitted: () => void }) {
@@ -92,16 +82,26 @@ function ClientForm({ onSubmitted }: { onSubmitted: () => void }) {
   }
 
   return (
-    <form onSubmit={(event) => void handleSubmit(event)} noValidate className="w-full max-w-sm">
-      <h2 className="text-center !text-3xl font-semibold text-zinc-50">Register a client</h2>
-      <p className="mt-2 mb-8 text-center text-zinc-400">All three fields are required.</p>
+    <form onSubmit={(event) => void handleSubmit(event)} noValidate className="w-full">
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[rgba(16,205,181,0.12)] text-teal-700 [[data-theme=dark]_&]:text-teal-300">
+        <KeyRound size={22} aria-hidden="true" />
+      </div>
+      <h2 className="mt-4 !text-4xl font-semibold text-[var(--theme-text-primary)]">Register a client</h2>
+      <p className="mt-1.5 !mb-6 text-[var(--theme-text-secondary)]">All three fields are required.</p>
       <div className="space-y-5">
-        {fields.map((field) => (
+        {fields.map((field) => {
+          const FieldIcon = field.icon
+          return (
           <div key={field.id}>
-            <label htmlFor={field.id} className="mb-1.5 block text-sm font-medium text-zinc-300">
+            <label htmlFor={field.id} className="mb-1.5 block text-sm font-medium text-[var(--theme-text-subtle)]">
               {field.label}
             </label>
-            <div className="relative">
+            <div className="group relative">
+              <FieldIcon
+                size={18}
+                aria-hidden="true"
+                className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-[var(--theme-text-secondary)] group-focus-within:text-teal-600"
+              />
               <input
                 id={field.id}
                 type={field.id === 'secret' && showSecret ? 'text' : field.type}
@@ -111,8 +111,8 @@ function ClientForm({ onSubmitted }: { onSubmitted: () => void }) {
                 aria-invalid={errors[field.id] ? true : undefined}
                 onChange={(event) => setValues({ ...values, [field.id]: event.target.value })}
                 className={
-                  'w-full rounded-md border bg-transparent px-3.5 py-2.5 text-zinc-50 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-teal-500/60 focus-visible:!shadow-none ' +
-                  (errors[field.id] ? 'border-red-500' : 'border-zinc-800') +
+                  'w-full rounded-lg border bg-[var(--theme-input-bg)] px-4 py-3 pl-10 text-[var(--theme-text-primary)] placeholder-[var(--theme-text-placeholder)] focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/15 focus-visible:!shadow-none transition-colors ' +
+                  (errors[field.id] ? 'border-red-500' : 'border-[var(--theme-border)]') +
                   (field.id === 'secret' ? ' pr-11 [&::-ms-reveal]:hidden' : '')
                 }
               />
@@ -121,7 +121,7 @@ function ClientForm({ onSubmitted }: { onSubmitted: () => void }) {
                   type="button"
                   onClick={() => setShowSecret((previous) => !previous)}
                   aria-label={showSecret ? 'Hide secret' : 'Show secret'}
-                  className="absolute top-1/2 right-3 -translate-y-1/2 border-0 bg-transparent p-0 text-zinc-400 hover:text-zinc-50 focus-visible:!shadow-none"
+                  className="absolute top-1/2 right-3 -translate-y-1/2 border-0 bg-transparent p-0 text-[var(--theme-text-secondary)] hover:text-[var(--theme-text-primary)] focus-visible:!shadow-none transition-colors"
                 >
                   {showSecret ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -129,7 +129,8 @@ function ClientForm({ onSubmitted }: { onSubmitted: () => void }) {
             </div>
             {errors[field.id] && <p className="mt-1 text-xs text-red-400">{errors[field.id]}</p>}
           </div>
-        ))}
+          )
+        })}
       </div>
       {submitError && (
         <p className="mt-4 text-sm text-red-400" role="alert">
@@ -139,13 +140,20 @@ function ClientForm({ onSubmitted }: { onSubmitted: () => void }) {
       <button
         type="submit"
         disabled={loading}
-        className="mt-8 w-full rounded-md bg-zinc-50 py-2.5 font-medium !text-zinc-900 hover:bg-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-50 focus:ring-offset-2 focus:ring-offset-zinc-950 focus-visible:!shadow-none disabled:opacity-60"
+        className="group mt-8 flex w-full items-center justify-center gap-2 rounded-lg border-0 bg-[var(--theme-btn-primary-bg)] py-3 font-medium !text-[var(--theme-btn-primary-text)] hover:opacity-90 focus:outline-none focus-visible:!shadow-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 disabled:opacity-60 transition-opacity"
       >
-        {loading ? 'Submitting...' : 'Submit'}
+        {loading ? (
+          'Requesting...'
+        ) : (
+          <>
+            Request
+            <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" />
+          </>
+        )}
       </button>
       <Link
         to="/details"
-        className="mt-3 mx-auto block w-fit rounded-md border border-zinc-600 px-3.5 py-2.5 text-center text-sm font-medium text-zinc-300 no-underline hover:border-zinc-400 hover:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-500/60 focus-visible:!shadow-none"
+        className="mt-3 block w-full rounded-lg border border-[var(--theme-border)] py-3 text-center text-sm font-medium !text-teal-700 [[data-theme=dark]_&]:!text-teal-300 !no-underline hover:!no-underline hover:bg-[rgba(16,205,181,0.08)] hover:border-teal-500/50 focus:outline-none focus-visible:!shadow-none focus-visible:ring-2 focus-visible:ring-teal-500 transition-colors"
       >
         Look up details
       </Link>
@@ -169,12 +177,20 @@ export function SubmitFormPage() {
   }, [toastPhase])
 
   return (
-    <div className="relative min-h-screen bg-zinc-950 text-zinc-50" style={{ display: 'flex', flexWrap: 'wrap' }}>
+    <div
+      className="relative min-h-full flex-1 w-full bg-[var(--theme-bg)] text-[var(--theme-text-primary)] transition-colors duration-150 overflow-x-hidden flex flex-col md:flex-row"
+      style={{
+        backgroundImage:
+          'radial-gradient(circle, var(--theme-dots) 0.75px, transparent 1px), var(--theme-page-gradient)',
+        backgroundSize: '32px 32px, 100% 100%',
+        backgroundRepeat: 'repeat, no-repeat',
+      }}
+    >
       {toastPhase !== 'hidden' ? (
         <div
           role="status"
           className={
-            'authdesk-toast fixed top-5 right-5 z-50 flex items-center gap-3 overflow-hidden rounded-lg border border-teal-400/60 bg-zinc-900 px-6 py-4 text-lg font-semibold tracking-tight text-zinc-50 shadow-lg ' +
+            'authdesk-toast fixed top-18 right-5 z-50 flex items-center gap-3 overflow-hidden rounded-lg border border-teal-400/60 bg-[var(--theme-toast-bg)] px-6 py-4 text-lg font-semibold tracking-tight text-[var(--theme-toast-text)] shadow-lg ' +
             (toastPhase === 'closing' ? 'authdesk-toast--out' : 'authdesk-toast--in')
           }
         >
@@ -184,29 +200,20 @@ export function SubmitFormPage() {
         </div>
       ) : null}
       <section
-        className="relative flex flex-col overflow-hidden p-10 lg:p-14"
-        style={{
-          flex: '1 1 360px',
-          backgroundImage: 'radial-gradient(rgba(255,255,255,0.14) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-        }}
+        className="relative flex flex-col justify-between p-8 sm:p-12 lg:p-16"
+        style={{ flex: '1 1 360px' }}
       >
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -bottom-32 -left-24 h-[28rem] w-[28rem] rounded-full bg-teal-500/20 blur-3xl"
-        />
-        <div className="relative">
-          <AuthDeskLogo />
-        </div>
-        <div className="relative flex flex-1 items-center">
+        <div className="relative flex flex-1 items-center py-10 md:py-0">
           <TypewriterText text={INTRO} />
         </div>
       </section>
       <section
-        className="flex items-center justify-center border-zinc-800 p-8 md:border-l"
-        style={{ flex: '1 1 360px', backgroundColor: '#09090b' }}
+        className="relative flex items-center justify-center md:justify-end p-6 sm:p-10 lg:p-14 md:pr-12 lg:pr-24 xl:pr-32 transition-colors duration-150"
+        style={{ flex: '1 1 360px' }}
       >
-        <ClientForm onSubmitted={() => setToastPhase('open')} />
+        <div className="authdesk-glass-card w-full max-w-lg rounded-[20px] p-8 sm:p-11">
+          <ClientForm onSubmitted={() => setToastPhase('open')} />
+        </div>
       </section>
     </div>
   )
