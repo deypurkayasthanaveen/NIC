@@ -11,6 +11,12 @@ const navItems = [
 const focusRing =
   'focus-visible:!outline-none focus-visible:!ring-2 focus-visible:!ring-teal-500/60 focus-visible:!ring-offset-2 focus-visible:!shadow-none'
 
+const loginButtonClass = [
+  'inline-flex min-h-11 items-center justify-center rounded-full bg-[#0B0B0C] px-4 py-2 text-sm font-medium !text-white !no-underline hover:!no-underline hover:opacity-90 transition-opacity motion-reduce:transition-none',
+  '[[data-theme=dark]_&]:bg-[#F2F4F4] [[data-theme=dark]_&]:!text-[#0B0B0C]',
+  'focus-visible:!outline-none focus-visible:!ring-2 focus-visible:!ring-teal-500 focus-visible:!ring-offset-2 focus-visible:!shadow-none',
+].join(' ')
+
 function AuthDeskMark() {
   return (
     <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true" className="shrink-0">
@@ -47,15 +53,12 @@ function mobileNavClassName({ isActive }: { isActive: boolean }) {
   ].join(' ')
 }
 
-export interface HeaderProps {
-  onSignIn?: () => void
-}
-
-export function Header({ onSignIn }: HeaderProps) {
+export function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
   const pillRef = useRef<HTMLDivElement>(null)
   const [menuPathname, setMenuPathname] = useState(location.pathname)
+  const isLoginPage = location.pathname === '/login'
 
   if (menuPathname !== location.pathname) {
     setMenuPathname(location.pathname)
@@ -113,14 +116,10 @@ export function Header({ onSignIn }: HeaderProps) {
         <div className="flex items-center gap-1.5 justify-self-end">
           <ThemeToggle />
 
-          {onSignIn ? (
-            <button
-              type="button"
-              onClick={onSignIn}
-              className={`max-[479px]:hidden rounded-full bg-[var(--hdr-btn-bg)] px-4 py-2 text-[15px] font-medium text-[var(--hdr-btn-text)] transition-[background-color] duration-150 hover:bg-[#26282A] motion-reduce:transition-none ${focusRing}`}
-            >
-              Sign in
-            </button>
+          {!isLoginPage ? (
+            <Link to="/login" className={`max-sm:hidden ${loginButtonClass}`}>
+              Login
+            </Link>
           ) : null}
 
           <button
@@ -146,6 +145,11 @@ export function Header({ onSignIn }: HeaderProps) {
                   {item.label}
                 </NavLink>
               ))}
+              {!isLoginPage ? (
+                <Link to="/login" className={`mt-1 w-full ${loginButtonClass}`}>
+                  Login
+                </Link>
+              ) : null}
             </nav>
           </div>
         ) : null}
