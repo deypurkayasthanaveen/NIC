@@ -1,13 +1,115 @@
-from uuid import uuid4
+import os
 import secrets
+from contextlib import asynccontextmanager
+from datetime import datetime, timezone
+from uuid import UUID, uuid4
+
 import bcrypt
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
+from redis.asyncio import Redis
+from redis.exceptions import RedisError
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.database import get_db
-from app.schemas import ClientDetailsResponse, ClientListItem, InitRequest, InitResponse
 
-app = FastAPI()
+from app.auth import (
+    ACCESS_TOKEN_EXPIRE_SECONDS,
+    create_access_token,
+    get_authenticated_client_id,
+    validate_env_client_credentials,
+)
+from app.database import get_db
+from app.schemas import (
+    ClientDetailsResponse,
+    ClientListItem,
+    InitRequest,
+    InitResponse,
+    TokenRequest,
+    TokenResponse,
+    TransactionsInitResponse,
+)
+
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    redis_url = os.getenv("REDIS_URL")
+    if not redis_url:
+        raise RuntimeError("REDIS_URL must be configured")
+    app.state.redis = Redis.from_url(redis_url)
+    try:
+        yield
+    finally:
+        await app.state.redis.close()
+app = FastAPI(lifespan=lifespan)
+
+def get_redis() -> Redis:
+    return app.state.redis
+
+@app.post(
+        "/api/v1/auth/token",
+        response_model=TokenResponse,
+)
+async def issue_access_token(data: TokenRequest):
+
+    if not validate_env_client_credentials(
+        data.client_id,
+        data.client_secret,
+    ):
+        raise HTTPException(
+            status_code = 401,
+            detail = "Invalid client credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+
+        )
+    return TokenResponse(
+        access_token = create_access_token(data.client_id),
+        expires_in = ACCESS_TOKEN_EXPIRE_SECONDS,
+    )
+@app.post(
+        "/api/v1/transaction/init",
+        response_model=TransactionsInitResponse,
+        status_code=201,
+)
+async def initialize_transaction(
+    client_id: str = Depends(get_authenticated_client_id),
+    redis: Redis = Depends(get_redis),
+):
+    transaction_id = uuid4()
+    transaction_key = f"registration_transaction:{transaction_id}"
+    transaction_ttl_seconds = int(
+        os.getenv("TRANSACTION_TTL_SECONDS", "600")
+    )
+    transaction = {
+        "client_id": client_id,
+        "status": "INITIALIZED",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+    try:
+        await redis.hset(transaction_key, mapping= transaction)
+        await redis.expire(transaction_key, transaction_ttl_seconds)
+    except RedisError:
+        raise HTTPException(
+            status_code=503,
+            detail= "Transaction Service Unavailable",
+
+        ) from None
+    return TransactionsInitResponse(
+        transaction_id=transaction_id,
+        status= "INITIALIZED",
+    )
+
+
+
+
+
+
+
+
+
+
+
+
 
 async def register_client(
     db: AsyncSession,

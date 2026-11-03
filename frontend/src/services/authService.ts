@@ -1,4 +1,5 @@
 const base = '/api/v1'
+const frontendAuthSessionKey = 'authdesk.frontend-authenticated'
 
 export interface LoginRequest {
   username: string
@@ -13,6 +14,14 @@ export class AuthApiError extends Error {
     super(message)
     this.name = 'AuthApiError'
   }
+}
+
+export function isFrontendAuthenticated(): boolean {
+  return window.sessionStorage.getItem(frontendAuthSessionKey) === 'true'
+}
+
+export function markFrontendAuthenticated(): void {
+  window.sessionStorage.setItem(frontendAuthSessionKey, 'true')
 }
 
 // TODO: confirm endpoint path, request body, and response shape

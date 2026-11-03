@@ -1,7 +1,11 @@
 import { useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
-import { AuthApiError, loginUser } from '../../services/authService'
+import {
+  AuthApiError,
+  loginUser,
+  markFrontendAuthenticated,
+} from '../../services/authService'
 
 type FieldId = 'username' | 'password'
 
@@ -12,6 +16,24 @@ interface LoginValues {
 
 const emptyValues: LoginValues = { username: '', password: '' }
 
+function getPostLoginDestination(state: unknown): { path: '/' | '/report'; state?: unknown } {
+  if (typeof state !== 'object' || state === null || !('from' in state)) {
+    return { path: '/' }
+  }
+
+  const from = state.from
+  if (
+    typeof from !== 'object' ||
+    from === null ||
+    !('pathname' in from) ||
+    from.pathname !== '/report'
+  ) {
+    return { path: '/' }
+  }
+
+  return { path: '/report', state: 'state' in from ? from.state : undefined }
+}
+
 function validate(values: LoginValues): Partial<Record<FieldId, string>> {
   const errors: Partial<Record<FieldId, string>> = {}
   if (!values.username.trim()) errors.username = 'Enter a username.'
@@ -20,6 +42,8 @@ function validate(values: LoginValues): Partial<Record<FieldId, string>> {
 }
 
 export function LoginPage() {
+  const location = useLocation()
+  const navigate = useNavigate()
   const [values, setValues] = useState<LoginValues>(emptyValues)
   const [errors, setErrors] = useState<Partial<Record<FieldId, string>>>({})
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -35,13 +59,27 @@ export function LoginPage() {
 
     setLoading(true)
     try {
-      await loginUser({
-        username: values.username.trim(),
-        password: values.password,
-      })
-      // TODO: redirect after successful login
-    } catch (error) {
-      setSubmitError(error instanceof AuthApiError ? error.message : 'Login failed.')
+      try {
+        await loginUser({
+          username: values.username.trim(),
+          password: values.password,
+        })
+      } catch (error) {
+        setSubmitError(error instanceof AuthApiError ? error.message : 'Login failed.')
+        return
+      }
+
+      try {
+        markFrontendAuthenticated()
+      } catch {
+        setSubmitError(
+          'Login succeeded, but this tab could not remember your sign-in. Please enable session storage and try again.',
+        )
+        return
+      }
+
+      const destination = getPostLoginDestination(location.state)
+      navigate(destination.path, { state: destination.state, replace: true })
     } finally {
       setLoading(false)
     }

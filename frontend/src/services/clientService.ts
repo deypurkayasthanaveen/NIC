@@ -60,6 +60,30 @@ export async function initClient(data: InitRequest): Promise<InitResponse> {
   return response.json() as Promise<InitResponse>
 }
 
+// TODO(backend): POST multipart/form-data to the new registration endpoint; the current /api/v1/init expects a JSON body with client_secret. Kong also needs a larger request body size limit and the API needs file validation, storage, and email and contact_number columns.
+export async function registerClient(values: {
+  name: string
+  email: string
+  contact: string
+  redirect: string
+  document: File
+}): Promise<void> {
+  const formData = new FormData()
+  formData.append('client_name', values.name)
+  formData.append('email', values.email)
+  formData.append('contact_number', values.contact)
+  formData.append('redirect_urls', values.redirect)
+  formData.append('document', values.document)
+
+  if (import.meta.env.DEV) {
+    console.warn('registerClient is using a simulated success because the backend is not connected')
+    await new Promise<void>((resolve) => window.setTimeout(resolve, 600))
+    return
+  }
+
+  throw new ClientApiError('Registration is not available yet.')
+}
+
 export async function getClientById(clientId: string): Promise<ClientDetails> {
   let response: Response
   try {

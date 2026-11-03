@@ -68,8 +68,8 @@ export function DetailsPage() {
           type="search"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search By Client Name"
-          aria-label="Search By Client Name"
+          placeholder="Search By Application Name"
+          aria-label="Search By Application Name"
           className="w-full max-w-xs rounded-md border border-[var(--theme-border)] bg-[var(--theme-input-bg)] px-3.5 py-2.5 text-sm text-[var(--theme-text-primary)] placeholder-[var(--theme-text-placeholder)] focus:outline-none focus:ring-2 focus:ring-teal-500/60 focus-visible:!shadow-none transition-colors sm:w-72"
         />
       </header>
@@ -94,7 +94,7 @@ export function DetailsPage() {
                   Client Id
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium">
-                  Client Name
+                  Application Name
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium">
                   Redirect URL
@@ -116,19 +116,22 @@ export function DetailsPage() {
                     </span>
                   </button>
                 </th>
+                <th scope="col" className="px-4 py-3 font-medium">
+                  Report
+                </th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-[var(--theme-text-secondary)]">
+                  <td colSpan={5} className="px-4 py-8 text-center text-[var(--theme-text-secondary)]">
                     Loading clients...
                   </td>
                 </tr>
               ) : visibleClients.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-[var(--theme-text-secondary)]">
-                    {search.trim() ? 'No clients match that name.' : 'No clients registered yet.'}
+                  <td colSpan={5} className="px-4 py-8 text-center text-[var(--theme-text-secondary)]">
+                    {search.trim() ? 'No applications match that name.' : 'No clients registered yet.'}
                   </td>
                 </tr>
               ) : (
@@ -140,6 +143,15 @@ export function DetailsPage() {
                     <td className="px-4 py-3 text-[var(--theme-text-primary)]">{client.client_name}</td>
                     <td className="max-w-xs truncate px-4 py-3 text-[var(--theme-text-secondary)]">{client.redirect_urls}</td>
                     <td className="whitespace-nowrap px-4 py-3 text-[var(--theme-text-secondary)]">{client.date}</td>
+                    <td className="px-4 py-3">
+                      <Link
+                        to="/report"
+                        state={{ clientId: client.client_id }}
+                        className="inline-flex min-h-11 items-center rounded-md px-2 text-sm font-medium !text-teal-700 !no-underline hover:!text-teal-600 hover:!no-underline [[data-theme=dark]_&]:!text-teal-300 focus-visible:!outline-none focus-visible:!ring-2 focus-visible:!ring-teal-500 focus-visible:!ring-offset-2 focus-visible:!shadow-none"
+                      >
+                        View report
+                      </Link>
+                    </td>
                   </tr>
                 ))
               )}
